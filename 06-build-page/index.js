@@ -14,19 +14,15 @@ async function createPage() {
   }
   async function createHtml() {
     let template = await fs.readFile(templateDir, 'utf-8');
+    const componentsFiles = await fs.readdir(componentsDir);
 
-    const tagRegex = /{{(\w+)}}/g;
-    const tags = [...template.matchAll(tagRegex)];
-
-    for (let match of tags) {
-      const [tag, name] = match;
-
-      const componentsPath = path.join(componentsDir, `${name}.html`);
-      try {
-        const commentContent = await fs.readFile(componentsPath, 'utf-8');
-        template = template.replace(tag, commentContent);
-      } catch (error) {
-        throw new Error('Error: wrong extension. It was expected to be .html.');
+    for (let file of componentsFiles) {
+      if (path.extname(file) === '.html') {
+        const name = path.basename(file, '.html');
+        const componentsPath = path.join(componentsDir, file);
+        const componentContent = await fs.readFile(componentsPath, 'utf-8');
+        const tag = `{{${name}}}`;
+        template = template.replace(tag, componentContent);
       }
     }
     await fs.writeFile(path.join(distDir, 'index.html'), template);
