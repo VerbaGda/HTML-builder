@@ -1,22 +1,24 @@
-// const fs = require('fs');
-// const path = require('path');
+const fs = require('fs/promises');
+const path = require('path');
 
-// const folderPath = path.join(__dirname, 'files');
+const filesDir = path.join(__dirname, 'files');
+const filesCopy = path.join(__dirname, 'files-copy');
 
-// const files=fs.readdirSync(folderPath,'utf8');
+async function copyDir() {
+  await fs.mkdir(filesCopy, {recursive: true});
+  const files = await fs.readdir(filesDir);
 
-// fs.mkdir(path.join(__dirname, 'files-copy'))
+  for (let file of files) {
+    const filesPatch = path.join(filesDir, file);
+    const copyPath = path.join(filesCopy, file);
+    const stats = await fs.stat(filesPatch);
 
-// // function makeDirectory() {
-// //   const projectFolder = join(
-// //     __dirname,
-// //     'test-css.css',
-// //     'test-image.jpg',
-// //     'test-js.js',
-// //     'test-text.txt',
-// //   );
-// //   const dirCreation=fs.mkdir(projectFolder);
-// //   return dirCreation
-// // }
+    if (stats.isFile()) {
+      await fs.copyFile(filesPatch, copyPath);
+    }
+  }
+  console.log('Copying is complete!');
+}
 
-// // makeDirectory()
+copyDir()
+
