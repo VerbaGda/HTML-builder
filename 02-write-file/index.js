@@ -4,9 +4,12 @@ const readline = require('readline');
 
 const pathFile = path.join(__dirname, 'write.txt');
 const writeSteam = fs.createWriteStream(pathFile);
-console.log('Welcome!');
+console.log('Welcome! Write yout text or type "exit" to quit.');
 
-let rl = readline.createInterface(process.stdin, process.stdout);
+let rl=readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 rl.prompt();
 rl.on('line', (input) => {
   if (input.toString().trim() === 'exit') {
